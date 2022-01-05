@@ -1,6 +1,8 @@
 package com.company.ui;
 
+import com.company.logic.PaidTo;
 import com.company.logic.Receivables;
+import com.company.logic.Sents;
 import com.company.logic.Withdrawals;
 
 import javax.swing.*;
@@ -46,7 +48,8 @@ public class MainUI {
     }
 
     private void checkTransaction(String mpesaText) {
-        //check if the transaction is a withdrawal and show the entity and amount
+        //check what type of transaction it is and return its details.
+
         if (mpesaText.contains("Withdraw")){
 
             Withdrawals withDrawals = new Withdrawals(mpesaText);
@@ -72,7 +75,7 @@ public class MainUI {
             columns.getColumn(4).setCellRenderer(centerRender);
 
 
-        }else {
+        } else if (mpesaText.contains("received")) {
             //check if the transaction message is a receivable and show the entity and amount
             if (mpesaText.contains("received")) {
 
@@ -81,8 +84,8 @@ public class MainUI {
                 String transactionType = receivables.getTransactionType();
                 String entity = receivables.getEntity();
                 String amount = receivables.receivedAmount(receivables.receiveText);
-                String time = receivables.receivedDate(receivables.receiveText);
-                String date = receivables.receivedTime(receivables.receiveText);
+                String date = receivables.receivedDate(receivables.receiveText);
+                String time = receivables.receivedTime(receivables.receiveText);
 
                 DefaultTableModel tableModel = (DefaultTableModel) transactionsTable.getModel();
                 tableModel.setRowCount(0);
@@ -99,6 +102,56 @@ public class MainUI {
                 columns.getColumn(3).setCellRenderer(centerRender);
                 columns.getColumn(4).setCellRenderer(centerRender);
 
+            }
+        } else if (mpesaText.contains("paid to")){
+            //Get the details of the transaction
+
+                PaidTo paidTo = new PaidTo(mpesaText);
+                String transactionType = paidTo.getTransactionType();
+                String entity = paidTo.getEntity();
+                String amount = paidTo.paidAmount(paidTo.paidToText);
+                String time = paidTo.paidTime(paidTo.paidToText);
+                String date = paidTo.paidDate(paidTo.paidToText);
+
+                DefaultTableModel tableModel = (DefaultTableModel) transactionsTable.getModel();
+                tableModel.setRowCount(0);
+                tableModel.addRow(new Object[]{
+                        transactionType, entity, amount, date, time
+                });
+                TableColumnModel columns = transactionsTable.getColumnModel();
+                columns.getColumn(1).setMinWidth(200);
+
+                DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
+                centerRender.setHorizontalAlignment(JLabel.CENTER);
+                columns.getColumn(0).setCellRenderer(centerRender);
+                columns.getColumn(2).setCellRenderer(centerRender);
+                columns.getColumn(3).setCellRenderer(centerRender);
+                columns.getColumn(4).setCellRenderer(centerRender);
+
+        } else{
+            if (mpesaText.contains("sent to")){
+
+                    Sents sents = new Sents(mpesaText);
+                    String transactionType = sents.getTransactionType();
+                    String entity = sents.getEntity();
+                    String amount = sents.sentAmount(sents.sentText);
+                    String time = sents.sentTime(sents.sentText);
+                    String date = sents.sentDate(sents.sentText);
+
+                    DefaultTableModel tableModel = (DefaultTableModel) transactionsTable.getModel();
+                    tableModel.setRowCount(0);
+                    tableModel.addRow(new Object[]{
+                            transactionType, entity, amount, date, time
+                    });
+                    TableColumnModel columns = transactionsTable.getColumnModel();
+                    columns.getColumn(1).setMinWidth(200);
+
+                    DefaultTableCellRenderer centerRender = new DefaultTableCellRenderer();
+                    centerRender.setHorizontalAlignment(JLabel.CENTER);
+                    columns.getColumn(0).setCellRenderer(centerRender);
+                    columns.getColumn(2).setCellRenderer(centerRender);
+                    columns.getColumn(3).setCellRenderer(centerRender);
+                    columns.getColumn(4).setCellRenderer(centerRender);
             }
         }
 
